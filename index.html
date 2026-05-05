@@ -2,28 +2,94 @@
 <html>
 <head>
   <title>Deepwoken Calculator</title>
+
   <style>
-    body { font-family: Arial; background:#1e1e1e; color:white; text-align:center; }
-    .container { display:flex; justify-content:space-around; margin-top:20px; }
-    .box { border:1px solid #444; padding:10px; width:40%; }
-    .slot { border:1px dashed #666; margin:5px; padding:10px; cursor:pointer; }
-    button { margin:10px; padding:5px 10px; }
-    img { width:40px; height:40px; }
+    body {
+      font-family: Arial;
+      background: #0f1a14;
+      color: white;
+      text-align: center;
+    }
+
+    h1 {
+      margin-top: 20px;
+    }
+
+    .container {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 30px;
+    }
+
+    .box {
+      background: #1e2d24;
+      border-radius: 20px;
+      padding: 20px;
+      width: 40%;
+      box-shadow: 0 0 15px rgba(0,255,150,0.1);
+    }
+
+    .label {
+      font-size: 20px;
+      margin-bottom: 10px;
+      opacity: 0.8;
+    }
+
+    .slot {
+      border: 2px dashed #3a5a4a;
+      border-radius: 12px;
+      margin: 8px;
+      padding: 12px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .slot:hover {
+      background: rgba(0,255,150,0.05);
+    }
+
+    button {
+      margin: 10px;
+      padding: 6px 12px;
+      border-radius: 10px;
+      border: none;
+      background: #2ecc71;
+      color: black;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    img {
+      width: 40px;
+      height: 40px;
+    }
+
+    #result {
+      margin-top: 30px;
+      font-size: 28px;
+      font-weight: bold;
+    }
 
     .popup {
-      display:none;
-      position:fixed;
-      top:50%; left:50%;
-      transform:translate(-50%,-50%);
-      background:#2a2a2a;
-      padding:20px;
-      border:1px solid #555;
+      display: none;
+      position: fixed;
+      top: 50%; left: 50%;
+      transform: translate(-50%,-50%);
+      background: #1e2d24;
+      padding: 20px;
+      border-radius: 15px;
+      border: 1px solid #3a5a4a;
     }
 
     .item {
-      display:inline-block;
-      margin:10px;
-      cursor:pointer;
+      display: inline-block;
+      margin: 10px;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .item:hover {
+      transform: scale(1.05);
     }
   </style>
 </head>
@@ -33,24 +99,25 @@
 <h1>Trade Calculator</h1>
 
 <div class="container">
+
   <div class="box">
-    <h2>Your Offer</h2>
+    <div class="label">You</div>
     <button onclick="addSlot('your')">+</button>
     <div id="yourSlots"></div>
     <p>Total: <span id="yourTotal">0</span></p>
   </div>
 
   <div class="box">
-    <h2>Their Offer</h2>
+    <div class="label">Them</div>
     <button onclick="addSlot('their')">+</button>
     <div id="theirSlots"></div>
     <p>Total: <span id="theirTotal">0</span></p>
   </div>
+
 </div>
 
-<h2 id="result">Result: Fair</h2>
+<h2 id="result">Fair</h2>
 
-<!-- POPUP -->
 <div id="popup" class="popup"></div>
 
 <script>
@@ -114,10 +181,21 @@ function update(){
   document.getElementById("theirTotal").innerText = theirTotal;
 
   let res = "Fair";
-  if(yourTotal > theirTotal) res = "W +" + (yourTotal-theirTotal);
-  if(yourTotal < theirTotal) res = "L -" + (theirTotal-yourTotal);
 
-  document.getElementById("result").innerText = "Result: " + res;
+  if(theirTotal > yourTotal){
+    res = "WIN +" + (theirTotal - yourTotal);
+    document.getElementById("result").style.color = "#2ecc71";
+  }
+  else if(yourTotal > theirTotal){
+    res = "LOSE -" + (yourTotal - theirTotal);
+    document.getElementById("result").style.color = "#ff4d4d";
+  }
+  else{
+    res = "Fair";
+    document.getElementById("result").style.color = "white";
+  }
+
+  document.getElementById("result").innerText = res;
 }
 </script>
 
