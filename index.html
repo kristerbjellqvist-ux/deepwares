@@ -11,8 +11,6 @@
       background: #0f1a14;
       color: white;
       margin: 0;
-
-      /* CENTER EVERYTHING */
       display: flex;
       justify-content: center;
       align-items: center;
@@ -22,6 +20,7 @@
     .wrapper {
       text-align: center;
       width: 100%;
+      max-width: 900px;
     }
 
     .container {
@@ -50,11 +49,7 @@
       margin: 8px;
       padding: 20px;
       cursor: pointer;
-      transition: 0.2s;
-    }
-
-    .slot:hover {
-      background: rgba(0,255,150,0.05);
+      min-height: 70px;
     }
 
     button {
@@ -75,8 +70,25 @@
     }
 
     #result {
-      margin-top: 20px;
+      margin-top: 15px;
       font-size: 28px;
+    }
+
+    /* WIN BAR */
+    .bar-container {
+      width: 100%;
+      height: 20px;
+      background: #222;
+      border-radius: 10px;
+      margin-top: 15px;
+      overflow: hidden;
+    }
+
+    .bar {
+      height: 100%;
+      width: 50%;
+      background: #2ecc71;
+      transition: 0.3s;
     }
 
     .popup {
@@ -88,14 +100,28 @@
       padding: 20px;
       border-radius: 15px;
       border: 1px solid #3a5a4a;
-      max-width: 400px;
+      max-width: 500px;
     }
 
     .item {
       display: inline-block;
-      margin: 10px;
+      background: #16241d;
+      border-radius: 10px;
+      padding: 10px;
+      margin: 8px;
+      width: 90px;
       cursor: pointer;
-      text-align: center;
+      transition: 0.2s;
+    }
+
+    .item:hover {
+      background: #1f3a2e;
+      transform: scale(1.05);
+    }
+
+    .value {
+      font-size: 12px;
+      opacity: 0.8;
     }
   </style>
 </head>
@@ -126,23 +152,29 @@
 
 <h2 id="result">Fair</h2>
 
+<div class="bar-container">
+  <div id="bar" class="bar"></div>
+</div>
+
 </div>
 
 <div id="popup" class="popup"></div>
 
 <script>
-const relics = [
-  {name:"Idol", value:1, img:""},
-  {name:"Moonseye Tome", value:4, img:""},
-  {name:"Sinner's Ash", value:5.25, img:""},
-  {name:"Armorer's Needle", value:0.25, img:""},
+let relics = [
   {name:"Dormant Splinter", value:15.75, img:""},
   {name:"Bloodfouler", value:8.5, img:""},
+  {name:"Sinner's Ash", value:5.25, img:""},
+  {name:"Moonseye Tome", value:4, img:""},
+  {name:"Idol", value:1, img:""},
+  {name:"Railblade", value:0.5, img:""},
+  {name:"Armorer's Needle", value:0.25, img:""},
   {name:"Ysley's Pyres Keeper", value:0.15, img:""},
   {name:"Stormseye", value:0.10, img:""},
-  {name:"Ignition Deepcrusher", value:0.10, img:""},
-  {name:"Railblade", value:0.5, img:""}
+  {name:"Ignition Deepcrusher", value:0.10, img:""}
 ];
+
+// already sorted highest → lowest
 
 let currentSlot = null;
 let currentSide = null;
@@ -156,7 +188,6 @@ function addSlot(side){
   slot.onclick = () => openPopup(side, slot);
 
   document.getElementById(side+"Slots").appendChild(slot);
-
   openPopup(side, slot);
 }
 
@@ -173,7 +204,8 @@ function openPopup(side, slot){
 
     div.innerHTML = `
       ${r.img ? `<img src="${r.img}" onerror="this.style.display='none'">` : ""}
-      <br>${r.name}
+      <div>${r.name}</div>
+      <div class="value">${r.value}</div>
     `;
 
     div.onclick = () => selectRelic(r);
@@ -201,7 +233,8 @@ function selectRelic(relic){
 }
 
 function removeRelic(slot, value, side){
-  slot.remove();
+  slot.innerHTML = ""; // FIXED VISUAL BUG
+  slot.onclick = () => openPopup(side, slot);
 
   if(side==="your"){
     your.splice(your.indexOf(value),1);
@@ -220,13 +253,14 @@ function update(){
   document.getElementById("theirTotal").innerText = theirTotal.toFixed(2);
 
   let res = "Fair";
+  let diff = theirTotal - yourTotal;
 
-  if(theirTotal > yourTotal){
-    res = "WIN +" + (theirTotal - yourTotal).toFixed(2);
+  if(diff > 0){
+    res = "WIN +" + diff.toFixed(2);
     document.getElementById("result").style.color = "#2ecc71";
   }
-  else if(yourTotal > theirTotal){
-    res = "LOSE -" + (yourTotal - theirTotal).toFixed(2);
+  else if(diff < 0){
+    res = "LOSE -" + Math.abs(diff).toFixed(2);
     document.getElementById("result").style.color = "#ff4d4d";
   }
   else{
@@ -235,6 +269,12 @@ function update(){
   }
 
   document.getElementById("result").innerText = res;
+
+  // BAR LOGIC
+  let total = yourTotal + theirTotal;
+  let percent = total === 0 ? 50 : (theirTotal / total) * 100;
+
+  document.getElementById("bar").style.width = percent + "%";
 }
 </script>
 
