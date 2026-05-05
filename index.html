@@ -43,30 +43,32 @@
       margin-bottom: 10px;
     }
 
-    .slot {
-      border: 2px dashed #3a5a4a;
-      border-radius: 12px;
-      margin: 8px;
-      padding: 20px;
-      cursor: pointer;
-      min-height: 70px;
+    /* GRID */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
     }
 
-    button {
-      margin: 10px;
-      padding: 6px 12px;
+    .slot {
+      border: 2px dashed #3a5a4a;
       border-radius: 10px;
-      border: none;
-      background: #2ecc71;
-      color: black;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       cursor: pointer;
-      font-family: 'Fondamento', cursive;
+      font-size: 12px;
+      text-align: center;
+    }
+
+    .slot:hover {
+      background: rgba(0,255,150,0.05);
     }
 
     img {
-      width: 45px;
-      height: 45px;
-      object-fit: contain;
+      width: 40px;
+      height: 40px;
     }
 
     #result {
@@ -74,7 +76,6 @@
       font-size: 28px;
     }
 
-    /* WIN BAR */
     .bar-container {
       width: 100%;
       height: 20px;
@@ -111,12 +112,6 @@
       margin: 8px;
       width: 90px;
       cursor: pointer;
-      transition: 0.2s;
-    }
-
-    .item:hover {
-      background: #1f3a2e;
-      transform: scale(1.05);
     }
 
     .value {
@@ -136,15 +131,13 @@
 
   <div class="box">
     <div class="label">You</div>
-    <button onclick="addSlot('your')">+</button>
-    <div id="yourSlots"></div>
+    <div id="yourGrid" class="grid"></div>
     <p>Total: <span id="yourTotal">0</span></p>
   </div>
 
   <div class="box">
     <div class="label">Them</div>
-    <button onclick="addSlot('their')">+</button>
-    <div id="theirSlots"></div>
+    <div id="theirGrid" class="grid"></div>
     <p>Total: <span id="theirTotal">0</span></p>
   </div>
 
@@ -174,21 +167,28 @@ let relics = [
   {name:"Ignition Deepcrusher", value:0.10, img:""}
 ];
 
-// already sorted highest → lowest
-
 let currentSlot = null;
 let currentSide = null;
 let your = [];
 let their = [];
 
-function addSlot(side){
-  let slot = document.createElement("div");
-  slot.className = "slot";
+function createGrid(side){
+  let grid = document.getElementById(side+"Grid");
 
-  slot.onclick = () => openPopup(side, slot);
+  for(let i=0;i<9;i++){
+    let slot = document.createElement("div");
+    slot.className = "slot";
 
-  document.getElementById(side+"Slots").appendChild(slot);
-  openPopup(side, slot);
+    slot.onclick = () => {
+      if(slot.dataset.value){
+        removeRelic(slot, side);
+      } else {
+        openPopup(side, slot);
+      }
+    };
+
+    grid.appendChild(slot);
+  }
 }
 
 function openPopup(side, slot){
@@ -219,10 +219,10 @@ function openPopup(side, slot){
 function selectRelic(relic){
   currentSlot.innerHTML = `
     ${relic.img ? `<img src="${relic.img}" onerror="this.style.display='none'">` : ""}
-    <br>${relic.name}
+    <div>${relic.name}</div>
   `;
 
-  currentSlot.onclick = () => removeRelic(currentSlot, relic.value, currentSide);
+  currentSlot.dataset.value = relic.value;
 
   if(currentSide==="your") your.push(relic.value);
   else their.push(relic.value);
@@ -232,9 +232,11 @@ function selectRelic(relic){
   update();
 }
 
-function removeRelic(slot, value, side){
-  slot.innerHTML = ""; // FIXED VISUAL BUG
-  slot.onclick = () => openPopup(side, slot);
+function removeRelic(slot, side){
+  let value = parseFloat(slot.dataset.value);
+
+  slot.innerHTML = "";
+  slot.dataset.value = "";
 
   if(side==="your"){
     your.splice(your.indexOf(value),1);
@@ -252,30 +254,30 @@ function update(){
   document.getElementById("yourTotal").innerText = yourTotal.toFixed(2);
   document.getElementById("theirTotal").innerText = theirTotal.toFixed(2);
 
-  let res = "Fair";
   let diff = theirTotal - yourTotal;
 
+  let res = "Fair";
   if(diff > 0){
     res = "WIN +" + diff.toFixed(2);
     document.getElementById("result").style.color = "#2ecc71";
-  }
-  else if(diff < 0){
+  } else if(diff < 0){
     res = "LOSE -" + Math.abs(diff).toFixed(2);
     document.getElementById("result").style.color = "#ff4d4d";
-  }
-  else{
-    res = "Fair";
+  } else {
     document.getElementById("result").style.color = "white";
   }
 
   document.getElementById("result").innerText = res;
 
-  // BAR LOGIC
   let total = yourTotal + theirTotal;
   let percent = total === 0 ? 50 : (theirTotal / total) * 100;
 
   document.getElementById("bar").style.width = percent + "%";
 }
+
+/* INIT */
+createGrid("your");
+createGrid("their");
 </script>
 
 </body>
