@@ -1,1 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Deepwoken Calculator</title>
+  <style>
+    body { font-family: Arial; background:#1e1e1e; color:white; text-align:center; }
+    .container { display:flex; justify-content:space-around; margin-top:20px; }
+    .box { border:1px solid #444; padding:10px; width:40%; }
+    .slot { border:1px dashed #666; margin:5px; padding:10px; cursor:pointer; }
+    button { margin:10px; padding:5px 10px; }
+    img { width:40px; height:40px; }
 
+    .popup {
+      display:none;
+      position:fixed;
+      top:50%; left:50%;
+      transform:translate(-50%,-50%);
+      background:#2a2a2a;
+      padding:20px;
+      border:1px solid #555;
+    }
+
+    .item {
+      display:inline-block;
+      margin:10px;
+      cursor:pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>Trade Calculator</h1>
+
+<div class="container">
+  <div class="box">
+    <h2>Your Offer</h2>
+    <button onclick="addSlot('your')">+</button>
+    <div id="yourSlots"></div>
+    <p>Total: <span id="yourTotal">0</span></p>
+  </div>
+
+  <div class="box">
+    <h2>Their Offer</h2>
+    <button onclick="addSlot('their')">+</button>
+    <div id="theirSlots"></div>
+    <p>Total: <span id="theirTotal">0</span></p>
+  </div>
+</div>
+
+<h2 id="result">Result: Fair</h2>
+
+<!-- POPUP -->
+<div id="popup" class="popup"></div>
+
+<script>
+const relics = [
+  {name:"Idol", value:100, img:"https://via.placeholder.com/50"},
+  {name:"Railblade", value:250, img:"https://via.placeholder.com/50"},
+  {name:"Enchant", value:400, img:"https://via.placeholder.com/50"}
+];
+
+let currentSlot = null;
+let currentSide = null;
+let your = [];
+let their = [];
+
+function addSlot(side){
+  let slot = document.createElement("div");
+  slot.className = "slot";
+  slot.innerText = "Click to choose relic";
+
+  slot.onclick = () => openPopup(side, slot);
+
+  document.getElementById(side+"Slots").appendChild(slot);
+}
+
+function openPopup(side, slot){
+  currentSlot = slot;
+  currentSide = side;
+
+  let popup = document.getElementById("popup");
+  popup.innerHTML = "";
+
+  relics.forEach(r => {
+    let div = document.createElement("div");
+    div.className = "item";
+    div.innerHTML = `<img src="${r.img}"><br>${r.name}`;
+
+    div.onclick = () => selectRelic(r);
+
+    popup.appendChild(div);
+  });
+
+  popup.style.display = "block";
+}
+
+function selectRelic(relic){
+  currentSlot.innerHTML = `<img src="${relic.img}"> ${relic.name} (${relic.value})`;
+
+  if(currentSide==="your") your.push(relic.value);
+  else their.push(relic.value);
+
+  document.getElementById("popup").style.display = "none";
+
+  update();
+}
+
+function update(){
+  let yourTotal = your.reduce((a,b)=>a+b,0);
+  let theirTotal = their.reduce((a,b)=>a+b,0);
+
+  document.getElementById("yourTotal").innerText = yourTotal;
+  document.getElementById("theirTotal").innerText = theirTotal;
+
+  let res = "Fair";
+  if(yourTotal > theirTotal) res = "W +" + (yourTotal-theirTotal);
+  if(yourTotal < theirTotal) res = "L -" + (theirTotal-yourTotal);
+
+  document.getElementById("result").innerText = "Result: " + res;
+}
+</script>
+
+</body>
+</html>
