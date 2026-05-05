@@ -3,43 +3,52 @@
 <head>
   <title>Deepwoken Calculator</title>
 
+  <link href="https://fonts.googleapis.com/css2?family=Fondamento&display=swap" rel="stylesheet">
+
   <style>
     body {
-      font-family: Arial;
+      font-family: 'Fondamento', cursive;
       background: #0f1a14;
       color: white;
-      text-align: center;
+      margin: 0;
+
+      /* CENTER EVERYTHING */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
     }
 
-    h1 {
-      margin-top: 20px;
+    .wrapper {
+      text-align: center;
+      width: 100%;
     }
 
     .container {
       display: flex;
-      justify-content: space-around;
-      margin-top: 30px;
+      justify-content: center;
+      gap: 40px;
+      margin-top: 20px;
     }
 
     .box {
       background: #1e2d24;
       border-radius: 20px;
       padding: 20px;
-      width: 40%;
+      width: 300px;
       box-shadow: 0 0 15px rgba(0,255,150,0.1);
     }
 
     .label {
-      font-size: 20px;
+      font-size: 22px;
       margin-bottom: 10px;
-      opacity: 0.8;
     }
 
     .slot {
       border: 2px dashed #3a5a4a;
       border-radius: 12px;
       margin: 8px;
-      padding: 12px;
+      padding: 20px;
       cursor: pointer;
       transition: 0.2s;
     }
@@ -56,18 +65,18 @@
       background: #2ecc71;
       color: black;
       cursor: pointer;
-      font-weight: bold;
+      font-family: 'Fondamento', cursive;
     }
 
     img {
-      width: 40px;
-      height: 40px;
+      width: 45px;
+      height: 45px;
+      object-fit: contain;
     }
 
     #result {
-      margin-top: 30px;
+      margin-top: 20px;
       font-size: 28px;
-      font-weight: bold;
     }
 
     .popup {
@@ -79,6 +88,7 @@
       padding: 20px;
       border-radius: 15px;
       border: 1px solid #3a5a4a;
+      max-width: 400px;
     }
 
     .item {
@@ -87,14 +97,12 @@
       cursor: pointer;
       text-align: center;
     }
-
-    .item:hover {
-      transform: scale(1.05);
-    }
   </style>
 </head>
 
 <body>
+
+<div class="wrapper">
 
 <h1>Trade Calculator</h1>
 
@@ -118,13 +126,22 @@
 
 <h2 id="result">Fair</h2>
 
+</div>
+
 <div id="popup" class="popup"></div>
 
 <script>
 const relics = [
-  {name:"Idol", value:100, img:"https://via.placeholder.com/50"},
-  {name:"Railblade", value:250, img:"https://via.placeholder.com/50"},
-  {name:"Enchant", value:400, img:"https://via.placeholder.com/50"}
+  {name:"Idol", value:1, img:""},
+  {name:"Moonseye Tome", value:4, img:""},
+  {name:"Sinner's Ash", value:5.25, img:""},
+  {name:"Armorer's Needle", value:0.25, img:""},
+  {name:"Dormant Splinter", value:15.75, img:""},
+  {name:"Bloodfouler", value:8.5, img:""},
+  {name:"Ysley's Pyres Keeper", value:0.15, img:""},
+  {name:"Stormseye", value:0.10, img:""},
+  {name:"Ignition Deepcrusher", value:0.10, img:""},
+  {name:"Railblade", value:0.5, img:""}
 ];
 
 let currentSlot = null;
@@ -135,11 +152,12 @@ let their = [];
 function addSlot(side){
   let slot = document.createElement("div");
   slot.className = "slot";
-  slot.innerText = "Click to choose relic";
 
   slot.onclick = () => openPopup(side, slot);
 
   document.getElementById(side+"Slots").appendChild(slot);
+
+  openPopup(side, slot);
 }
 
 function openPopup(side, slot){
@@ -152,7 +170,11 @@ function openPopup(side, slot){
   relics.forEach(r => {
     let div = document.createElement("div");
     div.className = "item";
-    div.innerHTML = `<img src="${r.img}"><br>${r.name}`;
+
+    div.innerHTML = `
+      ${r.img ? `<img src="${r.img}" onerror="this.style.display='none'">` : ""}
+      <br>${r.name}
+    `;
 
     div.onclick = () => selectRelic(r);
 
@@ -163,7 +185,12 @@ function openPopup(side, slot){
 }
 
 function selectRelic(relic){
-  currentSlot.innerHTML = `<img src="${relic.img}"> ${relic.name} (${relic.value})`;
+  currentSlot.innerHTML = `
+    ${relic.img ? `<img src="${relic.img}" onerror="this.style.display='none'">` : ""}
+    <br>${relic.name}
+  `;
+
+  currentSlot.onclick = () => removeRelic(currentSlot, relic.value, currentSide);
 
   if(currentSide==="your") your.push(relic.value);
   else their.push(relic.value);
@@ -173,21 +200,33 @@ function selectRelic(relic){
   update();
 }
 
+function removeRelic(slot, value, side){
+  slot.remove();
+
+  if(side==="your"){
+    your.splice(your.indexOf(value),1);
+  } else {
+    their.splice(their.indexOf(value),1);
+  }
+
+  update();
+}
+
 function update(){
   let yourTotal = your.reduce((a,b)=>a+b,0);
   let theirTotal = their.reduce((a,b)=>a+b,0);
 
-  document.getElementById("yourTotal").innerText = yourTotal;
-  document.getElementById("theirTotal").innerText = theirTotal;
+  document.getElementById("yourTotal").innerText = yourTotal.toFixed(2);
+  document.getElementById("theirTotal").innerText = theirTotal.toFixed(2);
 
   let res = "Fair";
 
   if(theirTotal > yourTotal){
-    res = "WIN +" + (theirTotal - yourTotal);
+    res = "WIN +" + (theirTotal - yourTotal).toFixed(2);
     document.getElementById("result").style.color = "#2ecc71";
   }
   else if(yourTotal > theirTotal){
-    res = "LOSE -" + (yourTotal - theirTotal);
+    res = "LOSE -" + (yourTotal - theirTotal).toFixed(2);
     document.getElementById("result").style.color = "#ff4d4d";
   }
   else{
