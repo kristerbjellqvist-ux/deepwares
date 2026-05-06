@@ -16,12 +16,13 @@ body {
   justify-content:center;
   align-items:center;
   overflow:hidden;
+  transform: scale(0.9); /* SMALLER */
 }
 
 .wrapper {
   text-align:center;
-  width:900px;
-  border:1px solid #3a5a4a;
+  width:850px;
+  border:2px solid #4f7a65; /* THICKER */
   padding:15px;
   border-radius:15px;
 }
@@ -29,15 +30,15 @@ body {
 .container {
   display:flex;
   justify-content:center;
-  gap:40px;
+  gap:30px;
 }
 
 .box {
   background:#1e2d24;
   border-radius:20px;
-  padding:20px;
-  width:300px;
-  border:1px solid #3a5a4a;
+  padding:15px;
+  width:280px;
+  border:2px solid #4f7a65; /* THICKER */
 }
 
 .grid {
@@ -47,18 +48,20 @@ body {
 }
 
 .slot {
-  border:2px dashed #3a5a4a;
+  border:2px dashed #4f7a65;
   border-radius:10px;
-  height:80px;
+  height:70px;
   display:flex;
   align-items:center;
   justify-content:center;
   cursor:pointer;
-  font-size:12px;
+  font-size:11px;
+  text-align:center;
 }
 
-.plus { font-size:28px; opacity:0.6; }
+.plus { font-size:24px; opacity:0.6; }
 
+/* POPUP */
 .popup {
   display:none;
   position:fixed;
@@ -67,61 +70,66 @@ body {
   background:#1e2d24;
   padding:20px;
   border-radius:15px;
-  max-width:500px;
-  border:1px solid #3a5a4a;
+  width:360px;
+  border:2px solid #4f7a65;
+}
+
+/* GRID INSIDE POPUP */
+#itemList {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  max-height:260px; /* 9 ITEMS */
+  overflow-y:auto; /* SCROLL INSIDE */
 }
 
 .item {
-  display:inline-block;
-  background:#16241d;
   border-radius:10px;
-  padding:10px;
-  margin:6px;
-  width:110px;
+  padding:8px;
   cursor:pointer;
-  border:1px solid #3a5a4a;
+  border:2px solid #4f7a65;
+  font-size:11px;
+  text-align:center;
 }
 
-.value { font-size:12px; opacity:0.8; }
+/* RELIC BG */
+.relic {
+  background: linear-gradient(90deg, #2ecc71, #a8ffcb, #2ecc71);
+  background-size:200%;
+  animation:shine 3s linear infinite;
+}
 
+/* WEAPON BG */
+.weapon {
+  background:#5e3a9e;
+}
+
+.value {
+  font-size:10px;
+  opacity:0.9;
+}
+
+/* SEARCH */
 input {
   width:90%;
-  padding:8px;
+  padding:6px;
   margin-bottom:10px;
   border-radius:8px;
-  border:1px solid #3a5a4a;
+  border:2px solid #4f7a65;
   background:#1b3328;
   color:white;
   font-family:'Fondamento',cursive;
 }
 
-/* RELIC GLOW */
-.relic {
-  background: linear-gradient(90deg, #9effc7, white, #9effc7);
-  background-size:200%;
-  animation:shine 3s linear infinite;
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-}
-
-/* WEAPON COLOR */
-.weapon {
-  color:#b57cff;
-}
-
-@keyframes shine {
-  0% {background-position:0%;}
-  100% {background-position:200%;}
-}
-
 /* BAR */
 .bar-container {
   width:100%;
-  height:20px;
+  height:18px;
   background:#222;
   border-radius:10px;
   margin-top:10px;
   overflow:hidden;
+  border:2px solid #4f7a65;
 }
 
 .bar {
@@ -135,6 +143,11 @@ input {
   margin-top:8px;
   font-style:italic;
   color:#ccc;
+}
+
+@keyframes shine {
+  0% {background-position:0%;}
+  100% {background-position:200%;}
 }
 </style>
 </head>
@@ -264,9 +277,9 @@ function renderItems(list){
 
   list.forEach(r=>{
     let div=document.createElement("div");
-    div.className="item";
+    div.className="item "+(r.type==="Relic"?"relic":"weapon");
     div.innerHTML=`
-      <div class="${r.type==='Relic'?'relic':'weapon'}">${r.name}</div>
+      <div>${r.name}</div>
       <div class="value">${r.value} • ${r.type}</div>
     `;
     div.onclick=()=>selectItem(r);
