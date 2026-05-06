@@ -17,106 +17,66 @@
       height: 100vh;
     }
 
-    .wrapper {
-      text-align: center;
-      width: 100%;
-      max-width: 900px;
-    }
+    .wrapper { text-align: center; max-width: 900px; width:100%; }
 
-    .container {
-      display: flex;
-      justify-content: center;
-      gap: 40px;
-      margin-top: 20px;
-    }
+    .container { display:flex; justify-content:center; gap:40px; }
 
     .box {
-      background: #1e2d24;
-      border-radius: 20px;
-      padding: 20px;
-      width: 300px;
-      box-shadow: 0 0 15px rgba(0,255,150,0.1);
+      background:#1e2d24;
+      border-radius:20px;
+      padding:20px;
+      width:300px;
     }
 
-    .label {
-      font-size: 22px;
-      margin-bottom: 10px;
-    }
-
-    /* GRID */
     .grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:10px;
     }
 
     .slot {
-      border: 2px dashed #3a5a4a;
-      border-radius: 10px;
-      height: 80px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font-size: 12px;
-      text-align: center;
+      border:2px dashed #3a5a4a;
+      border-radius:10px;
+      height:80px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      font-size:12px;
+      text-align:center;
     }
 
-    .slot:hover {
-      background: rgba(0,255,150,0.05);
-    }
-
-    img {
-      width: 40px;
-      height: 40px;
-    }
-
-    #result {
-      margin-top: 15px;
-      font-size: 28px;
-    }
-
-    .bar-container {
-      width: 100%;
-      height: 20px;
-      background: #222;
-      border-radius: 10px;
-      margin-top: 15px;
-      overflow: hidden;
-    }
-
-    .bar {
-      height: 100%;
-      width: 50%;
-      background: #2ecc71;
-      transition: 0.3s;
-    }
+    .plus { font-size:28px; opacity:0.6; }
 
     .popup {
-      display: none;
-      position: fixed;
-      top: 50%; left: 50%;
-      transform: translate(-50%,-50%);
-      background: #1e2d24;
-      padding: 20px;
-      border-radius: 15px;
-      border: 1px solid #3a5a4a;
-      max-width: 500px;
+      display:none;
+      position:fixed;
+      top:50%; left:50%;
+      transform:translate(-50%,-50%);
+      background:#1e2d24;
+      padding:20px;
+      border-radius:15px;
+      max-width:500px;
     }
 
     .item {
-      display: inline-block;
-      background: #16241d;
-      border-radius: 10px;
-      padding: 10px;
-      margin: 8px;
-      width: 90px;
-      cursor: pointer;
+      display:inline-block;
+      background:#16241d;
+      border-radius:10px;
+      padding:10px;
+      margin:6px;
+      width:100px;
+      cursor:pointer;
     }
 
-    .value {
-      font-size: 12px;
-      opacity: 0.8;
+    .value { font-size:12px; opacity:0.8; }
+
+    input {
+      width:90%;
+      padding:8px;
+      margin-bottom:10px;
+      border-radius:8px;
+      border:none;
     }
   </style>
 </head>
@@ -129,25 +89,21 @@
 
 <div class="container">
 
-  <div class="box">
-    <div class="label">You</div>
-    <div id="yourGrid" class="grid"></div>
-    <p>Total: <span id="yourTotal">0</span></p>
-  </div>
+<div class="box">
+  <h2>You</h2>
+  <div id="yourGrid" class="grid"></div>
+  <p>Total: <span id="yourTotal">0</span></p>
+</div>
 
-  <div class="box">
-    <div class="label">Them</div>
-    <div id="theirGrid" class="grid"></div>
-    <p>Total: <span id="theirTotal">0</span></p>
-  </div>
+<div class="box">
+  <h2>Them</h2>
+  <div id="theirGrid" class="grid"></div>
+  <p>Total: <span id="theirTotal">0</span></p>
+</div>
 
 </div>
 
 <h2 id="result">Fair</h2>
-
-<div class="bar-container">
-  <div id="bar" class="bar"></div>
-</div>
 
 </div>
 
@@ -155,22 +111,31 @@
 
 <script>
 let relics = [
-  {name:"Dormant Splinter", value:15.75, img:""},
-  {name:"Bloodfouler", value:8.5, img:""},
-  {name:"Sinner's Ash", value:5.25, img:""},
-  {name:"Moonseye Tome", value:4, img:""},
-  {name:"Idol", value:1, img:""},
-  {name:"Railblade", value:0.5, img:""},
-  {name:"Armorer's Needle", value:0.25, img:""},
-  {name:"Ysley's Pyres Keeper", value:0.15, img:""},
-  {name:"Stormseye", value:0.10, img:""},
-  {name:"Ignition Deepcrusher", value:0.10, img:""}
+  {name:"Whistling Peraipt", value:157.5, type:"Relic"},
+  {name:"Dormant Splinter", value:15.75, type:"Relic"},
+  {name:"Bloodfouler", value:8.5, type:"Relic"},
+  {name:"Sinner's Ash", value:5.25, type:"Relic"},
+  {name:"Moonseye Tome", value:4, type:"Relic"},
+  {name:"Idol of Yun'Shul", value:1, type:"Relic"},
+  {name:"Kyrswinter", value:0.85, type:"Weapon"},
+  {name:"Gilded Needle", value:0.8, type:"Weapon"},
+  {name:"Railblade", value:0.5, type:"Weapon"},
+  {name:"Forge Needle", value:0.5, type:"Weapon"},
+  {name:"Flareblood Kamas", value:0.2, type:"Weapon"},
+  {name:"Smith's Alloy", value:0.1, type:"Relic"},
+  {name:"Stormseye", value:0.10, type:"Weapon"},
+  {name:"Ignition Deepcrusher", value:0.10, type:"Weapon"},
+  {name:"Curved Blade of Winds", value:0.05, type:"Weapon"},
+  {name:"Crypt Blade", value:0.02, type:"Weapon"},
+  {name:"Gran Sudaruska", value:0.02, type:"Weapon"},
+  {name:"Armorer's Needle", value:0.25, type:"Relic"},
+  {name:"Ysley's Pyres Keeper", value:0.15, type:"Relic"}
 ];
 
-let currentSlot = null;
-let currentSide = null;
-let your = [];
-let their = [];
+let your = Array(9).fill(null);
+let their = Array(9).fill(null);
+
+let currentSide, currentIndex;
 
 function createGrid(side){
   let grid = document.getElementById(side+"Grid");
@@ -179,103 +144,102 @@ function createGrid(side){
     let slot = document.createElement("div");
     slot.className = "slot";
 
-    slot.onclick = () => {
-      if(slot.dataset.value){
-        removeRelic(slot, side);
-      } else {
-        openPopup(side, slot);
-      }
-    };
+    slot.onclick = () => handleClick(side, i);
 
     grid.appendChild(slot);
   }
+
+  renderGrid(side);
 }
 
-function openPopup(side, slot){
-  currentSlot = slot;
+function handleClick(side, index){
+  let arr = side==="your" ? your : their;
+
+  if(arr[index]){
+    arr[index]=null;
+    renderGrid(side);
+    update();
+  } else if(index === arr.findIndex(x=>x===null)){
+    openPopup(side, index);
+  }
+}
+
+function renderGrid(side){
+  let grid = document.getElementById(side+"Grid");
+  let arr = side==="your" ? your : their;
+
+  [...grid.children].forEach((slot,i)=>{
+    if(arr[i]){
+      slot.innerHTML = `<div>${arr[i].name}</div>`;
+    } else if(i === arr.findIndex(x=>x===null)){
+      slot.innerHTML = `<div class="plus">+</div>`;
+    } else {
+      slot.innerHTML = "";
+    }
+  });
+}
+
+function openPopup(side, index){
   currentSide = side;
+  currentIndex = index;
 
   let popup = document.getElementById("popup");
-  popup.innerHTML = "";
+  popup.innerHTML = `
+    <input placeholder="Search..." oninput="searchItems(this.value)">
+    <div id="itemList"></div>
+  `;
 
-  relics.forEach(r => {
-    let div = document.createElement("div");
-    div.className = "item";
-
-    div.innerHTML = `
-      ${r.img ? `<img src="${r.img}" onerror="this.style.display='none'">` : ""}
-      <div>${r.name}</div>
-      <div class="value">${r.value}</div>
-    `;
-
-    div.onclick = () => selectRelic(r);
-
-    popup.appendChild(div);
-  });
+  renderItems(relics);
 
   popup.style.display = "block";
 }
 
-function selectRelic(relic){
-  currentSlot.innerHTML = `
-    ${relic.img ? `<img src="${relic.img}" onerror="this.style.display='none'">` : ""}
-    <div>${relic.name}</div>
-  `;
+function renderItems(list){
+  let container = document.getElementById("itemList");
+  container.innerHTML = "";
 
-  currentSlot.dataset.value = relic.value;
-
-  if(currentSide==="your") your.push(relic.value);
-  else their.push(relic.value);
-
-  document.getElementById("popup").style.display = "none";
-
-  update();
+  list.forEach(r=>{
+    let div=document.createElement("div");
+    div.className="item";
+    div.innerHTML = `
+      <div>${r.name}</div>
+      <div class="value">${r.value} • ${r.type}</div>
+    `;
+    div.onclick=()=>selectItem(r);
+    container.appendChild(div);
+  });
 }
 
-function removeRelic(slot, side){
-  let value = parseFloat(slot.dataset.value);
+function searchItems(query){
+  let filtered = relics.filter(r=>r.name.toLowerCase().includes(query.toLowerCase()));
+  renderItems(filtered);
+}
 
-  slot.innerHTML = "";
-  slot.dataset.value = "";
+function selectItem(item){
+  let arr = currentSide==="your"?your:their;
+  arr[currentIndex]=item;
 
-  if(side==="your"){
-    your.splice(your.indexOf(value),1);
-  } else {
-    their.splice(their.indexOf(value),1);
-  }
+  document.getElementById("popup").style.display="none";
 
+  renderGrid(currentSide);
   update();
 }
 
 function update(){
-  let yourTotal = your.reduce((a,b)=>a+b,0);
-  let theirTotal = their.reduce((a,b)=>a+b,0);
+  let yourTotal = your.reduce((a,b)=>a+(b?b.value:0),0);
+  let theirTotal = their.reduce((a,b)=>a+(b?b.value:0),0);
 
   document.getElementById("yourTotal").innerText = yourTotal.toFixed(2);
   document.getElementById("theirTotal").innerText = theirTotal.toFixed(2);
 
   let diff = theirTotal - yourTotal;
 
-  let res = "Fair";
-  if(diff > 0){
-    res = "WIN +" + diff.toFixed(2);
-    document.getElementById("result").style.color = "#2ecc71";
-  } else if(diff < 0){
-    res = "LOSE -" + Math.abs(diff).toFixed(2);
-    document.getElementById("result").style.color = "#ff4d4d";
-  } else {
-    document.getElementById("result").style.color = "white";
-  }
-
-  document.getElementById("result").innerText = res;
-
-  let total = yourTotal + theirTotal;
-  let percent = total === 0 ? 50 : (theirTotal / total) * 100;
-
-  document.getElementById("bar").style.width = percent + "%";
+  document.getElementById("result").innerText =
+    diff>0 ? "WIN +" + diff.toFixed(2) :
+    diff<0 ? "LOSE -" + Math.abs(diff).toFixed(2) :
+    "Fair";
 }
 
-/* INIT */
 createGrid("your");
 createGrid("their");
 </script>
