@@ -1,84 +1,101 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Deepwoken Calculator</title>
+<title>Trade Calculator</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Fondamento&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fondamento&display=swap" rel="stylesheet">
 
-  <style>
-    body {
-      font-family: 'Fondamento', cursive;
-      background: #0f1a14;
-      color: white;
-      margin: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
+<style>
+body {
+  font-family: 'Fondamento', cursive;
+  background:#0f1a14;
+  color:white;
+  margin:0;
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  overflow:hidden; /* NO SCROLL */
+}
 
-    .wrapper { text-align: center; max-width: 900px; width:100%; }
+.wrapper { text-align:center; width:900px; }
 
-    .container { display:flex; justify-content:center; gap:40px; }
+.container { display:flex; justify-content:center; gap:40px; }
 
-    .box {
-      background:#1e2d24;
-      border-radius:20px;
-      padding:20px;
-      width:300px;
-    }
+.box {
+  background:#1e2d24;
+  border-radius:20px;
+  padding:20px;
+  width:300px;
+}
 
-    .grid {
-      display:grid;
-      grid-template-columns:repeat(3,1fr);
-      gap:10px;
-    }
+.grid {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+}
 
-    .slot {
-      border:2px dashed #3a5a4a;
-      border-radius:10px;
-      height:80px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      cursor:pointer;
-      font-size:12px;
-      text-align:center;
-    }
+.slot {
+  border:2px dashed #3a5a4a;
+  border-radius:10px;
+  height:80px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  font-size:12px;
+}
 
-    .plus { font-size:28px; opacity:0.6; }
+.plus { font-size:28px; opacity:0.6; }
 
-    .popup {
-      display:none;
-      position:fixed;
-      top:50%; left:50%;
-      transform:translate(-50%,-50%);
-      background:#1e2d24;
-      padding:20px;
-      border-radius:15px;
-      max-width:500px;
-    }
+.popup {
+  display:none;
+  position:fixed;
+  top:50%; left:50%;
+  transform:translate(-50%,-50%);
+  background:#1e2d24;
+  padding:20px;
+  border-radius:15px;
+  max-width:500px;
+}
 
-    .item {
-      display:inline-block;
-      background:#16241d;
-      border-radius:10px;
-      padding:10px;
-      margin:6px;
-      width:100px;
-      cursor:pointer;
-    }
+.item {
+  display:inline-block;
+  background:#16241d;
+  border-radius:10px;
+  padding:10px;
+  margin:6px;
+  width:110px;
+  cursor:pointer;
+}
 
-    .value { font-size:12px; opacity:0.8; }
+.value { font-size:12px; opacity:0.8; }
 
-    input {
-      width:90%;
-      padding:8px;
-      margin-bottom:10px;
-      border-radius:8px;
-      border:none;
-    }
-  </style>
+input {
+  width:90%;
+  padding:8px;
+  margin-bottom:10px;
+  border-radius:8px;
+  border:none;
+}
+
+/* BAR */
+.bar-container {
+  width:100%;
+  height:20px;
+  background:#222;
+  border-radius:10px;
+  margin-top:10px;
+  overflow:hidden;
+}
+
+.bar {
+  height:100%;
+  width:50%;
+  background:#2ecc71;
+  transition:0.3s;
+}
+</style>
 </head>
 
 <body>
@@ -90,20 +107,24 @@
 <div class="container">
 
 <div class="box">
-  <h2>You</h2>
-  <div id="yourGrid" class="grid"></div>
-  <p>Total: <span id="yourTotal">0</span></p>
+<h2>You</h2>
+<div id="yourGrid" class="grid"></div>
+<p>Total: <span id="yourTotal">0</span></p>
 </div>
 
 <div class="box">
-  <h2>Them</h2>
-  <div id="theirGrid" class="grid"></div>
-  <p>Total: <span id="theirTotal">0</span></p>
+<h2>Them</h2>
+<div id="theirGrid" class="grid"></div>
+<p>Total: <span id="theirTotal">0</span></p>
 </div>
 
 </div>
 
 <h2 id="result">Fair</h2>
+
+<div class="bar-container">
+  <div id="bar" class="bar"></div>
+</div>
 
 </div>
 
@@ -111,25 +132,25 @@
 
 <script>
 let relics = [
-  {name:"Whistling Peraipt", value:157.5, type:"Relic"},
-  {name:"Dormant Splinter", value:15.75, type:"Relic"},
-  {name:"Bloodfouler", value:8.5, type:"Relic"},
-  {name:"Sinner's Ash", value:5.25, type:"Relic"},
-  {name:"Moonseye Tome", value:4, type:"Relic"},
-  {name:"Idol of Yun'Shul", value:1, type:"Relic"},
-  {name:"Kyrswinter", value:0.85, type:"Weapon"},
-  {name:"Gilded Needle", value:0.8, type:"Weapon"},
-  {name:"Railblade", value:0.5, type:"Weapon"},
-  {name:"Forge Needle", value:0.5, type:"Weapon"},
-  {name:"Flareblood Kamas", value:0.2, type:"Weapon"},
-  {name:"Smith's Alloy", value:0.1, type:"Relic"},
-  {name:"Stormseye", value:0.10, type:"Weapon"},
-  {name:"Ignition Deepcrusher", value:0.10, type:"Weapon"},
-  {name:"Curved Blade of Winds", value:0.05, type:"Weapon"},
-  {name:"Crypt Blade", value:0.02, type:"Weapon"},
-  {name:"Gran Sudaruska", value:0.02, type:"Weapon"},
-  {name:"Armorer's Needle", value:0.25, type:"Relic"},
-  {name:"Ysley's Pyres Keeper", value:0.15, type:"Relic"}
+{name:"Whistling Peraipt", value:157.5, type:"Relic"},
+{name:"Dormant Splinter", value:15.75, type:"Weapon"},
+{name:"Bloodfouler", value:8.5, type:"Weapon"},
+{name:"Sinner's Ash", value:5.25, type:"Relic"},
+{name:"Moonseye Tome", value:4, type:"Relic"},
+{name:"Idol of Yun'Shul", value:1, type:"Relic"},
+{name:"Kyrswinter", value:0.85, type:"Weapon"},
+{name:"Gilded Needle", value:0.8, type:"Relic"},
+{name:"Railblade", value:0.5, type:"Weapon"},
+{name:"Forge Needle", value:0.5, type:"Relic"},
+{name:"Flareblood Kamas", value:0.2, type:"Weapon"},
+{name:"Smith's Alloy", value:0.1, type:"Relic"},
+{name:"Stormseye", value:0.10, type:"Weapon"},
+{name:"Ignition Deepcrusher", value:0.10, type:"Weapon"},
+{name:"Curved Blade of Winds", value:0.05, type:"Weapon"},
+{name:"Crypt Blade", value:0.02, type:"Weapon"},
+{name:"Gran Sudaruska", value:0.02, type:"Weapon"},
+{name:"Armorer's Needle", value:0.25, type:"Relic"},
+{name:"Ysley's Pyres Keeper", value:0.15, type:"Weapon"}
 ];
 
 let your = Array(9).fill(null);
@@ -139,69 +160,64 @@ let currentSide, currentIndex;
 
 function createGrid(side){
   let grid = document.getElementById(side+"Grid");
-
   for(let i=0;i<9;i++){
-    let slot = document.createElement("div");
-    slot.className = "slot";
-
-    slot.onclick = () => handleClick(side, i);
-
+    let slot=document.createElement("div");
+    slot.className="slot";
+    slot.onclick=()=>handleClick(side,i);
     grid.appendChild(slot);
   }
-
   renderGrid(side);
 }
 
-function handleClick(side, index){
-  let arr = side==="your" ? your : their;
+function handleClick(side,index){
+  let arr = side==="your"?your:their;
 
   if(arr[index]){
     arr[index]=null;
     renderGrid(side);
     update();
   } else if(index === arr.findIndex(x=>x===null)){
-    openPopup(side, index);
+    openPopup(side,index);
   }
 }
 
 function renderGrid(side){
-  let grid = document.getElementById(side+"Grid");
-  let arr = side==="your" ? your : their;
+  let grid=document.getElementById(side+"Grid");
+  let arr=side==="your"?your:their;
 
   [...grid.children].forEach((slot,i)=>{
     if(arr[i]){
-      slot.innerHTML = `<div>${arr[i].name}</div>`;
-    } else if(i === arr.findIndex(x=>x===null)){
-      slot.innerHTML = `<div class="plus">+</div>`;
+      slot.innerHTML=`<div>${arr[i].name}</div>`;
+    } else if(i===arr.findIndex(x=>x===null)){
+      slot.innerHTML=`<div class="plus">+</div>`;
     } else {
-      slot.innerHTML = "";
+      slot.innerHTML="";
     }
   });
 }
 
-function openPopup(side, index){
-  currentSide = side;
-  currentIndex = index;
+function openPopup(side,index){
+  currentSide=side;
+  currentIndex=index;
 
-  let popup = document.getElementById("popup");
-  popup.innerHTML = `
+  let popup=document.getElementById("popup");
+  popup.innerHTML=`
     <input placeholder="Search..." oninput="searchItems(this.value)">
     <div id="itemList"></div>
   `;
 
   renderItems(relics);
-
-  popup.style.display = "block";
+  popup.style.display="block";
 }
 
 function renderItems(list){
-  let container = document.getElementById("itemList");
-  container.innerHTML = "";
+  let container=document.getElementById("itemList");
+  container.innerHTML="";
 
   list.forEach(r=>{
     let div=document.createElement("div");
     div.className="item";
-    div.innerHTML = `
+    div.innerHTML=`
       <div>${r.name}</div>
       <div class="value">${r.value} • ${r.type}</div>
     `;
@@ -210,13 +226,13 @@ function renderItems(list){
   });
 }
 
-function searchItems(query){
-  let filtered = relics.filter(r=>r.name.toLowerCase().includes(query.toLowerCase()));
+function searchItems(q){
+  let filtered=relics.filter(r=>r.name.toLowerCase().includes(q.toLowerCase()));
   renderItems(filtered);
 }
 
 function selectItem(item){
-  let arr = currentSide==="your"?your:their;
+  let arr=currentSide==="your"?your:their;
   arr[currentIndex]=item;
 
   document.getElementById("popup").style.display="none";
@@ -226,18 +242,31 @@ function selectItem(item){
 }
 
 function update(){
-  let yourTotal = your.reduce((a,b)=>a+(b?b.value:0),0);
-  let theirTotal = their.reduce((a,b)=>a+(b?b.value:0),0);
+  let yourTotal=your.reduce((a,b)=>a+(b?b.value:0),0);
+  let theirTotal=their.reduce((a,b)=>a+(b?b.value:0),0);
 
-  document.getElementById("yourTotal").innerText = yourTotal.toFixed(2);
-  document.getElementById("theirTotal").innerText = theirTotal.toFixed(2);
+  document.getElementById("yourTotal").innerText=yourTotal.toFixed(2);
+  document.getElementById("theirTotal").innerText=theirTotal.toFixed(2);
 
-  let diff = theirTotal - yourTotal;
+  let diff=theirTotal-yourTotal;
 
-  document.getElementById("result").innerText =
-    diff>0 ? "WIN +" + diff.toFixed(2) :
-    diff<0 ? "LOSE -" + Math.abs(diff).toFixed(2) :
-    "Fair";
+  let result=document.getElementById("result");
+
+  if(diff>0){
+    result.innerText="WIN +"+diff.toFixed(2);
+    result.style.color="#2ecc71";
+  } else if(diff<0){
+    result.innerText="LOSE -"+Math.abs(diff).toFixed(2);
+    result.style.color="#ff4d4d";
+  } else {
+    result.innerText="Fair";
+    result.style.color="white";
+  }
+
+  let total=yourTotal+theirTotal;
+  let percent= total===0?50:(theirTotal/total)*100;
+
+  document.getElementById("bar").style.width=percent+"%";
 }
 
 createGrid("your");
