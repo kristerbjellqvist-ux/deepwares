@@ -15,18 +15,29 @@ body {
   display:flex;
   justify-content:center;
   align-items:center;
-  overflow:hidden; /* NO SCROLL */
+  overflow:hidden;
 }
 
-.wrapper { text-align:center; width:900px; }
+.wrapper {
+  text-align:center;
+  width:900px;
+  border:1px solid #3a5a4a;
+  padding:15px;
+  border-radius:15px;
+}
 
-.container { display:flex; justify-content:center; gap:40px; }
+.container {
+  display:flex;
+  justify-content:center;
+  gap:40px;
+}
 
 .box {
   background:#1e2d24;
   border-radius:20px;
   padding:20px;
   width:300px;
+  border:1px solid #3a5a4a;
 }
 
 .grid {
@@ -57,6 +68,7 @@ body {
   padding:20px;
   border-radius:15px;
   max-width:500px;
+  border:1px solid #3a5a4a;
 }
 
 .item {
@@ -67,6 +79,7 @@ body {
   margin:6px;
   width:110px;
   cursor:pointer;
+  border:1px solid #3a5a4a;
 }
 
 .value { font-size:12px; opacity:0.8; }
@@ -76,7 +89,29 @@ input {
   padding:8px;
   margin-bottom:10px;
   border-radius:8px;
-  border:none;
+  border:1px solid #3a5a4a;
+  background:#1b3328;
+  color:white;
+  font-family:'Fondamento',cursive;
+}
+
+/* RELIC GLOW */
+.relic {
+  background: linear-gradient(90deg, #9effc7, white, #9effc7);
+  background-size:200%;
+  animation:shine 3s linear infinite;
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+
+/* WEAPON COLOR */
+.weapon {
+  color:#b57cff;
+}
+
+@keyframes shine {
+  0% {background-position:0%;}
+  100% {background-position:200%;}
 }
 
 /* BAR */
@@ -94,6 +129,12 @@ input {
   width:50%;
   background:#2ecc71;
   transition:0.3s;
+}
+
+#flavor {
+  margin-top:8px;
+  font-style:italic;
+  color:#ccc;
 }
 </style>
 </head>
@@ -126,6 +167,8 @@ input {
   <div id="bar" class="bar"></div>
 </div>
 
+<div id="flavor"></div>
+
 </div>
 
 <div id="popup" class="popup"></div>
@@ -133,6 +176,7 @@ input {
 <script>
 let relics = [
 {name:"Whistling Peraipt", value:157.5, type:"Relic"},
+{name:"Bloodforged Crown", value:52.5, type:"Relic"},
 {name:"Dormant Splinter", value:15.75, type:"Weapon"},
 {name:"Bloodfouler", value:8.5, type:"Weapon"},
 {name:"Sinner's Ash", value:5.25, type:"Relic"},
@@ -157,6 +201,10 @@ let your = Array(9).fill(null);
 let their = Array(9).fill(null);
 
 let currentSide, currentIndex;
+
+const winMsgs = ["You better accept that!","Too good to be true!","Lucky day!","Saved you a ethiron run!","I thought they said they removed Luck!"];
+const fairMsgs = ["Seems good!","Nice deal, make sure to look at the demand!","Nothing like a chill fair offer.","Seems legit.","Ferryman's level of kindness!"];
+const loseMsgs = ["Are you sure about this?","Wouldn't take that to be honest.","Sketchy...","Are you that desperate?","Better pay off..","You need it for a build??","Calm down!","Noone's stopping you..","Value manipulation they say!","Are you insane?"];
 
 function createGrid(side){
   let grid = document.getElementById(side+"Grid");
@@ -187,7 +235,7 @@ function renderGrid(side){
 
   [...grid.children].forEach((slot,i)=>{
     if(arr[i]){
-      slot.innerHTML=`<div>${arr[i].name}</div>`;
+      slot.innerHTML=`<div class="${arr[i].type==='Relic'?'relic':'weapon'}">${arr[i].name}</div>`;
     } else if(i===arr.findIndex(x=>x===null)){
       slot.innerHTML=`<div class="plus">+</div>`;
     } else {
@@ -218,7 +266,7 @@ function renderItems(list){
     let div=document.createElement("div");
     div.className="item";
     div.innerHTML=`
-      <div>${r.name}</div>
+      <div class="${r.type==='Relic'?'relic':'weapon'}">${r.name}</div>
       <div class="value">${r.value} • ${r.type}</div>
     `;
     div.onclick=()=>selectItem(r);
@@ -249,19 +297,25 @@ function update(){
   document.getElementById("theirTotal").innerText=theirTotal.toFixed(2);
 
   let diff=theirTotal-yourTotal;
-
   let result=document.getElementById("result");
+
+  let flavor="";
 
   if(diff>0){
     result.innerText="WIN +"+diff.toFixed(2);
     result.style.color="#2ecc71";
+    flavor=winMsgs[Math.floor(Math.random()*winMsgs.length)];
   } else if(diff<0){
     result.innerText="LOSE -"+Math.abs(diff).toFixed(2);
     result.style.color="#ff4d4d";
+    flavor=loseMsgs[Math.floor(Math.random()*loseMsgs.length)];
   } else {
     result.innerText="Fair";
     result.style.color="white";
+    flavor=fairMsgs[Math.floor(Math.random()*fairMsgs.length)];
   }
+
+  document.getElementById("flavor").innerText=flavor;
 
   let total=yourTotal+theirTotal;
   let percent= total===0?50:(theirTotal/total)*100;
