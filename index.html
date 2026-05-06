@@ -61,7 +61,6 @@ body {
 
 .plus { font-size:24px; opacity:0.6; }
 
-/* POPUP */
 .popup {
   display:none;
   position:fixed;
@@ -74,7 +73,6 @@ body {
   border:2px solid #4f7a65;
 }
 
-/* GRID INSIDE POPUP */
 #itemList {
   display:grid;
   grid-template-columns:repeat(3,1fr);
@@ -92,24 +90,20 @@ body {
   text-align:center;
 }
 
-/* RELIC BG */
 .relic {
   background: linear-gradient(90deg, #2ecc71, #a8ffcb, #2ecc71);
   background-size:200%;
   animation:shine 3s linear infinite;
 }
 
-/* WEAPON BG */
 .weapon {
   background:#5e3a9e;
 }
 
 .value {
   font-size:10px;
-  opacity:0.9;
 }
 
-/* SEARCH */
 input {
   width:90%;
   padding:6px;
@@ -121,7 +115,6 @@ input {
   font-family:'Fondamento',cursive;
 }
 
-/* BAR */
 .bar-container {
   width:100%;
   height:18px;
@@ -150,7 +143,7 @@ input {
   100% {background-position:200%;}
 }
 
-/* SCROLLBAR THEME */
+/* ✅ YOUR SCROLLBAR (ONLY ADDITION) */
 ::-webkit-scrollbar {
   width: 10px;
 }
@@ -230,7 +223,134 @@ let relics = [
 {name:"Ysley's Pyres Keeper", value:0.15, type:"Weapon"}
 ];
 
-/* rest of your JS unchanged */
+let your = Array(9).fill(null);
+let their = Array(9).fill(null);
+
+let currentSide, currentIndex;
+
+const winMsgs = ["You better accept that!","Too good to be true!","Lucky day!","Saved you a ethiron run!","I thought they said they removed Luck!"];
+const fairMsgs = ["Seems good!","Nice deal, make sure to look at the demand!","Nothing like a chill fair offer.","Seems legit.","Ferryman's level of kindness!"];
+const loseMsgs = ["Are you sure about this?","Wouldn't take that to be honest.","Sketchy...","Are you that desperate?","Better pay off..","You need it for a build??","Calm down!","Noone's stopping you..","Value manipulation they say!","Are you insane?"];
+
+function createGrid(side){
+  let grid = document.getElementById(side+"Grid");
+  for(let i=0;i<9;i++){
+    let slot=document.createElement("div");
+    slot.className="slot";
+    slot.onclick=()=>handleClick(side,i);
+    grid.appendChild(slot);
+  }
+  renderGrid(side);
+}
+
+function handleClick(side,index){
+  let arr = side==="your"?your:their;
+
+  if(arr[index]){
+    arr[index]=null;
+    renderGrid(side);
+    update();
+  } else if(index === arr.findIndex(x=>x===null)){
+    openPopup(side,index);
+  }
+}
+
+function renderGrid(side){
+  let grid=document.getElementById(side+"Grid");
+  let arr=side==="your"?your:their;
+
+  [...grid.children].forEach((slot,i)=>{
+    if(arr[i]){
+      slot.innerHTML=`<div class="${arr[i].type==='Relic'?'relic':'weapon'}">${arr[i].name}</div>`;
+    } else if(i===arr.findIndex(x=>x===null)){
+      slot.innerHTML=`<div class="plus">+</div>`;
+    } else {
+      slot.innerHTML="";
+    }
+  });
+}
+
+function openPopup(side,index){
+  currentSide=side;
+  currentIndex=index;
+
+  let popup=document.getElementById("popup");
+  popup.innerHTML=`
+    <input placeholder="Search..." oninput="searchItems(this.value)">
+    <div id="itemList"></div>
+  `;
+
+  renderItems(relics);
+  popup.style.display="block";
+}
+
+function renderItems(list){
+  let container=document.getElementById("itemList");
+  container.innerHTML="";
+
+  list.forEach(r=>{
+    let div=document.createElement("div");
+    div.className="item "+(r.type==="Relic"?"relic":"weapon");
+    div.innerHTML=`
+      <div>${r.name}</div>
+      <div class="value">${r.value} • ${r.type}</div>
+    `;
+    div.onclick=()=>selectItem(r);
+    container.appendChild(div);
+  });
+}
+
+function searchItems(q){
+  let filtered=relics.filter(r=>r.name.toLowerCase().includes(q.toLowerCase()));
+  renderItems(filtered);
+}
+
+function selectItem(item){
+  let arr=currentSide==="your"?your:their;
+  arr[currentIndex]=item;
+
+  document.getElementById("popup").style.display="none";
+
+  renderGrid(currentSide);
+  update();
+}
+
+function update(){
+  let yourTotal=your.reduce((a,b)=>a+(b?b.value:0),0);
+  let theirTotal=their.reduce((a,b)=>a+(b?b.value:0),0);
+
+  document.getElementById("yourTotal").innerText=yourTotal.toFixed(2);
+  document.getElementById("theirTotal").innerText=theirTotal.toFixed(2);
+
+  let diff=theirTotal-yourTotal;
+  let result=document.getElementById("result");
+
+  let flavor="";
+
+  if(diff>0){
+    result.innerText="WIN +"+diff.toFixed(2);
+    result.style.color="#2ecc71";
+    flavor=winMsgs[Math.floor(Math.random()*winMsgs.length)];
+  } else if(diff<0){
+    result.innerText="LOSE -"+Math.abs(diff).toFixed(2);
+    result.style.color="#ff4d4d";
+    flavor=loseMsgs[Math.floor(Math.random()*loseMsgs.length)];
+  } else {
+    result.innerText="Fair";
+    result.style.color="white";
+    flavor=fairMsgs[Math.floor(Math.random()*fairMsgs.length)];
+  }
+
+  document.getElementById("flavor").innerText=flavor;
+
+  let total=yourTotal+theirTotal;
+  let percent= total===0?50:(theirTotal/total)*100;
+
+  document.getElementById("bar").style.width=percent+"%";
+}
+
+createGrid("your");
+createGrid("their");
 </script>
 
 </body>
